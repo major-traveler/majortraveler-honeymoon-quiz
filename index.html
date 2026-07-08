@@ -248,7 +248,10 @@ function scoreHotel(h){
   return s;
 }
 function pickTop(){
-  const ranked=HOTELS.map(h=>({h,score:scoreHotel(h)+Math.random()*0.001})).sort((a,b)=>b.score-a.score);
+  // Rule: never surface Aruba unless the traveler chose Fall (its low hurricane risk only matters then)
+  const fallSelected=answers.some(w=>w&&w.seasonRisk==="fall");
+  const pool=HOTELS.filter(h=>fallSelected||h.country!=="Aruba");
+  const ranked=pool.map(h=>({h,score:scoreHotel(h)+Math.random()*0.001})).sort((a,b)=>b.score-a.score);
   const out=[]; const perCountry={};
   for(const r of ranked){
     const c=r.h.country; perCountry[c]=perCountry[c]||0;
