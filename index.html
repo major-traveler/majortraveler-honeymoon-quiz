@@ -250,8 +250,13 @@ function scoreHotel(h){
 function pickTop(){
   // Rule: honeymoon-only. Exclude any hotel flagged Family Friendly — keep results couples-focused.
   // Rule: never surface Aruba unless the traveler chose Fall (its low hurricane risk only matters then)
+  // Rule: for Summer/Fall, exclude hotels the seasonality column marks "closed" (hrisk==="high"),
+  //       since they shut during hurricane season. Winter/Spring they're open, so still eligible.
   const fallSelected=answers.some(w=>w&&w.seasonRisk==="fall");
-  const pool=HOTELS.filter(h=>!h.family && (fallSelected||h.country!=="Aruba"));
+  const closedSeason=answers.some(w=>w&&(w.seasonRisk==="fall"||w.seasonRisk==="summer"));
+  const pool=HOTELS.filter(h=>!h.family
+    && (fallSelected||h.country!=="Aruba")
+    && !(closedSeason&&h.hrisk==="high"));
   const ranked=pool.map(h=>({h,score:scoreHotel(h)+Math.random()*0.001})).sort((a,b)=>b.score-a.score);
   const out=[]; const perCountry={};
   for(const r of ranked){
@@ -259,6 +264,10 @@ function pickTop(){
     if(perCountry[c]>=2) continue;      // max 2 per island, keeps results varied
     perCountry[c]++; out.push(r);
     if(out.length===3) break;
+  }
+  // Fallback: if the rules left fewer than 3, relax the per-island cap so we always show 3.
+  if(out.length<3){
+    for(const r of ranked){ if(out.includes(r)) continue; out.push(r); if(out.length===3) break; }
   }
   return out;
 }
