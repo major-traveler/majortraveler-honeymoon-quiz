@@ -11,7 +11,7 @@
 :root{
   color-scheme: light;
   --green:#2f504c; --green-deep:#223c39; --sage:#7bb5b0;
-  --terra:#c76b4a; --gold:#c9a24b; --cream:#f4eddc; --cream-2:#e8dbc1;
+  --terra:#e44445; --gold:#f4ba4e; --cream:#f4eddc; --cream-2:#e8dbc1;
   --ink:#22301f; --muted:#6f6a5c; --white:#fffdf8;
   --shadow:0 18px 50px rgba(44,58,42,.16);
 }
@@ -86,10 +86,10 @@ html,body{background:var(--cream);color:var(--ink);font-family:'Inter',-apple-sy
 .invite h3{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:var(--green-deep);margin:6px 0 8px;line-height:1.1}
 .invite p{font-size:14px;color:var(--muted);max-width:420px;margin:0 auto 18px}
 .invite .btn{background:var(--terra);color:#fff}
-.invite .btn:hover{background:#b85b3c}
+.invite .btn:hover{background:#c93536}
 .cta-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .cta .btn{background:var(--gold);color:#2c2410}
-.cta .btn:hover{background:#d8b45c}
+.cta .btn:hover{background:#e6a63a}
 .cta .btn.book{background:#fdfcf6;color:var(--green)}
 .cta .btn.book:hover{background:#fff}
 .cta .pw{margin-top:16px;font-size:12.5px;letter-spacing:.06em;opacity:.92}
@@ -256,7 +256,8 @@ function pickTop(){
   const closedSeason=answers.some(w=>w&&(w.seasonRisk==="fall"||w.seasonRisk==="summer"));
   const pool=HOTELS.filter(h=>!h.family
     && (fallSelected||h.country!=="Aruba")
-    && !(closedSeason&&h.hrisk==="high"));
+    && !(closedSeason&&h.hrisk==="high")
+    && !/baha mar/i.test(h.name));   // Rule: never suggest the Baha Mar properties
   const ranked=pool.map(h=>({h,score:scoreHotel(h)+Math.random()*0.001})).sort((a,b)=>b.score-a.score);
   const out=[]; const perCountry={};
   for(const r of ranked){
